@@ -34,14 +34,14 @@ export default function Table({ columns, data, onDelete, onEdit }) {
 
               <button
                 onClick={() => onEdit && onEdit(rowIndex)}
-                className="px-3 py-1 bg-amber-600 text-white rounded hover:bg-amber-700 transition"
+                className="px-3 py-1 bg-yellow-500 text-white rounded"
               >
                 Editar
               </button>
 
               <button
                 onClick={() => onDelete && onDelete(rowIndex)}
-                className="px-3 py-1 bg-rose-600 text-white rounded hover:bg-rose-700 transition"
+                className="px-3 py-1 bg-red-500 text-white rounded"
               >
                 Eliminar
               </button>
