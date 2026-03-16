@@ -6,7 +6,7 @@ const axios = require('axios');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const favoritos = {} // { email: [pokemon] }
+const favoritos = {} 
 const app = express();
 const pool = require('./bd');
 
@@ -14,9 +14,6 @@ app.use(express.json());
 app.use(cors());
 
 
-/* =========================
-   MIDDLEWARE JWT
-========================= */
 const auth = (req, res, next) => {
   const header = req.headers.authorization;
 
@@ -35,10 +32,7 @@ const auth = (req, res, next) => {
   }
 };
 
-/* =========================
-   AUTH
-========================= */
-// REGISTER
+
 app.post('/auth/register', async (req, res) => {
   const { email, password } = req.body;
 
@@ -56,7 +50,7 @@ app.post('/auth/register', async (req, res) => {
   }
 });
 
-// LOGIN
+
 app.post('/auth/login', async (req, res) => {
   const { email, password } = req.body;
 
@@ -86,7 +80,6 @@ app.post('/auth/login', async (req, res) => {
 });
 
 
-// FILTROS POKÉMON
 app.get('/pokemon', async (req, res) => {
   const { name, type } = req.query;
 
@@ -112,9 +105,6 @@ app.get('/pokemon', async (req, res) => {
 
 
 
-/* =========================
-   POKÉMON
-========================= */
 app.get('/pokemon/:name', async (req, res) => {
   try {
     const response = await axios.get(
@@ -157,9 +147,7 @@ app.get('/regions', async (req, res) => {
 });
 
 
-/* =========================
-   FAVORITOS (PROTEGIDOS)
-========================= */
+
 app.post('/favorites', auth, async (req, res) => {
   const { pokemon_id, pokemon_name } = req.body;
   const user_id = req.user.id;
@@ -198,9 +186,7 @@ app.delete('/favorites/:pokemonId', auth, async (req, res) => {
   res.json({ ok: true });
 });
 
-/* =========================
-   SERVER
-========================= */
+
 app.listen(process.env.PORT, () => {
   console.log(`Servidor activo en http://localhost:${process.env.PORT}`);
 });

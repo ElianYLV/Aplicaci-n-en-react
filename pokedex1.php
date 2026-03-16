@@ -188,7 +188,3 @@ new bootstrap.Modal(document.getElementById('editarModal')).show();
 </body>
 </html>
 
-<!-- 
-asfasfsdsafas
-asfasfasf
-dfhhjhj -->

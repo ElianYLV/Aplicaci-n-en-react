@@ -1,172 +1,56 @@
-import { useState } from 'react'
-import './App.css'
+import { useState } from "react";
+import Pokemons from "./pages/Pokemons";
+import PokemonGen1 from "./pages/PokemonGen1";
+import Login from "./pages/Login";
 
-function App() {
+export default function App() {
 
-  // 🔐 LOGIN
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [token, setToken] = useState(localStorage.getItem('token'))
-  const logout = () => {
-  localStorage.removeItem('token')
-  setToken(null)
-}
+  const [page, setPage] = useState("pokemons");
+  const [logged, setLogged] = useState(false);
 
-  // 🔍 POKEMON
-  const [name, setName] = useState('')
-  const [pokemon, setPokemon] = useState(null)
-  const [error, setError] = useState('')
-
-  // ⭐ FAVORITOS
-  const [favoritos, setFavoritos] = useState([])
-
-  // ======================
-  // LOGIN
-  // ======================
-  const login = async () => {
-    try {
-      const res = await fetch('http://localhost:3000/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      })
-
-      if (!res.ok) throw new Error()
-
-      const data = await res.json()
-      localStorage.setItem('token', data.token)
-      setToken(data.token)
-    } catch {
-      alert('Login incorrecto')
-    }
+  if (!logged) {
+    return <Login onLogin={setLogged} />;
   }
 
-  // ======================
-  // BUSCAR POKEMON
-  // ======================
-  const buscar = async () => {
-    setError('')
-    setPokemon(null)
+return (
 
-    try {
-      const res = await fetch(`http://localhost:3000/pokemon/${name}`)
-      if (!res.ok) throw new Error()
+  <div
+    className="min-h-screen bg-cover bg-center"
+    style={{
+      backgroundImage: "url('/fondo4.jpg')"
+    }}
+  >
 
-      const data = await res.json()
-      setPokemon(data)
-    } catch {
-      setError('No encontrado')
-    }
-  }
+    <div className="backdrop-blur-sm min-h-screen">
 
-  // ======================
-  // FAVORITOS
-  // ======================
-const cargarFavoritos = async () => {
-  const res = await fetch('http://localhost:3000/favorites', {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  })
-  const data = await res.json()
-  setFavoritos(data)
-}
+      <div className="p-4 bg-gray-900 text-white flex gap-4 shadow-lg">
 
-const agregarFavorito = async () => {
-  await fetch('http://localhost:3000/favorites', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
-    },
-    body: JSON.stringify({
-      pokemon_id: pokemon.id,
-      pokemon_name: pokemon.nombre
-    })
-  })
-  alert('Agregado a favoritos ⭐')
-}
+        <button
+          onClick={() => setPage("pokemons")}
+          className="bg-blue-500 px-4 py-2 rounded hover:bg-blue-600"
+        >
+          Pokemons
+        </button>
 
-  // ======================
-  // RENDER
-  // ======================
-  return (
-    <div className="container">
+        <button
+          onClick={() => setPage("gen1")}
+          className="bg-purple-500 px-4 py-2 rounded hover:bg-purple-600"
+        >
+          Gen 1
+        </button>
 
-      {/* LOGIN */}
-      {!token && (
-        <div className="login">
-          <h2>Login</h2>
+      </div>
 
-          <input
-            placeholder="Email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-          />
+      <div className="p-6">
 
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-          />
+        {page === "pokemons" && <Pokemons />}
+        {page === "gen1" && <PokemonGen1 />}
 
-          <button onClick={login}>Entrar</button>
-        </div>
-      )}
+      </div>
 
-      {/* POKEDEX */}
-      {token && (
-        <>
-          <h1>Pokédex</h1>
-          <button onClick={logout}>Salir</button>
-
-          <button onClick={cargarFavoritos}>Ver favoritos</button>
-
-          {favoritos.map(p => (
-            <p key={p.pokemon_id}>⭐ {p.pokemon_name}</p>
-          ))}
-
-          <input
-            placeholder="Nombre del Pokémon"
-            value={name}
-            onChange={e => setName(e.target.value)}
-          />
-
-          <button onClick={buscar}>Buscar</button>
-
-          {error && <p>{error}</p>}
-
-          {pokemon && (
-            <div className="card">
-              <h2>{pokemon.nombre}</h2>
-              <img src={pokemon.imagen} alt={pokemon.nombre} />
-
-              <p><strong>Tipos:</strong> {pokemon.tipos.join(', ')}</p>
-
-              <button onClick={agregarFavorito}>
-                ⭐ Favorito
-              </button>
-
-              <h3>Stats</h3>
-              {pokemon.stats.map(s => (
-                <div key={s.nombre} className="stat">
-                  <span>{s.nombre}</span>
-                  <div className="bar">
-                    <div
-                      className="fill"
-                      style={{ width: `${s.valor}%` }}
-                    />
-                  </div>
-                  <span>{s.valor}</span>
-                </div>
-              ))}
-            </div>
-          )}
-        </>
-      )}
     </div>
-  )
-}
 
-export default App
+  </div>
+
+);
+}
